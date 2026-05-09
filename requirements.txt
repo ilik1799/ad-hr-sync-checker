@@ -1,0 +1,12 @@
+# Active Directory (Windows COM-based, требует pywin32)
+pyad>=0.6.0
+
+# Jira REST API
+jira>=3.10.0
+
+# Excel чтение
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# Безопасное хранение токенов
+keyring>=24.0.0

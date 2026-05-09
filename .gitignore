@@ -1,0 +1,19 @@
+# Логи и dry-run артефакты
+*.log
+dry_run_email.html
+dry_run_jira.txt
+
+# Excel-реестры — могут содержать персональные данные сотрудников!
+*.xlsx
+*.xlsm
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store

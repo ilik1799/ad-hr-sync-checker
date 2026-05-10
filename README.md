@@ -25,10 +25,18 @@ HTML-отчёт по email.
 
 ## Что делает
 
-```
-Excel-реестр ──┐
-               ├──▶ analyze_discrepancies() ──▶ HTML email
-AD (pyad)   ──┘                              └─▶ Jira issue (linked to quarterly)
+```mermaid
+flowchart LR
+    A[Excel-реестр] --> C[analyze_discrepancies]
+    B[Active Directory<br/>pyad] --> C
+    C --> D[HTML email<br/>всегда]
+    C -.при расхождениях.-> E[Jira issue<br/>linked to quarterly]
+
+    style A fill:#1f6feb,stroke:#58a6ff,color:#fff
+    style B fill:#1f6feb,stroke:#58a6ff,color:#fff
+    style C fill:#388bfd,stroke:#79c0ff,color:#fff
+    style D fill:#238636,stroke:#3fb950,color:#fff
+    style E fill:#238636,stroke:#3fb950,color:#fff
 ```
 
 **Jira-логика:** ищется родительская квартальная задача по JQL, создаётся

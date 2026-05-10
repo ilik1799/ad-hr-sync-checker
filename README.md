@@ -27,17 +27,45 @@ HTML-отчёт по email.
 
 ```mermaid
 flowchart LR
-    A[Excel-реестр] --> C[analyze_discrepancies]
-    B[Active Directory<br/>pyad] --> C
-    C --> D[HTML email<br/>всегда]
-    C -.при расхождениях.-> E[Jira issue<br/>linked to quarterly]
+    subgraph IN["Inputs"]
+        EX["Excel<br/>HR registry"]
+        AD["Active Directory<br/>(pyad)"]
+        KR["keyring<br/>(Jira API token)"]
+    end
 
-    style A fill:#1f6feb,stroke:#58a6ff,color:#fff
-    style B fill:#1f6feb,stroke:#58a6ff,color:#fff
-    style C fill:#388bfd,stroke:#79c0ff,color:#fff
-    style D fill:#238636,stroke:#3fb950,color:#fff
-    style E fill:#238636,stroke:#3fb950,color:#fff
+    ANALYZE["analyze_discrepancies<br/>5 categories"]
+
+    subgraph EXT["External notifications"]
+        SMTP["SMTP<br/>retry 3×"]
+        JIRA["Jira REST API"]
+    end
+
+    EMAIL["HTML email<br/>(always)"]
+    ISSUE["Jira issue<br/>(if discrepancies)"]
+
+    EX --> ANALYZE
+    AD --> ANALYZE
+    ANALYZE --> SMTP
+    SMTP --> EMAIL
+    KR --> JIRA
+    ANALYZE -->|"if discrepancies"| JIRA
+    JIRA --> ISSUE
+
+    classDef in fill:#1f6feb,stroke:#1f6feb,color:#fff
+    classDef core fill:#8957e5,stroke:#8957e5,color:#fff
+    classDef ext fill:#57606a,stroke:#57606a,color:#fff
+    classDef out fill:#1a7f37,stroke:#1a7f37,color:#fff
+    class EX,AD,KR in
+    class ANALYZE core
+    class SMTP,JIRA ext
+    class EMAIL,ISSUE out
 ```
+
+Скрипт читает Excel-реестр и Active Directory (через `pyad` с фильтром
+`employeeType=ExcludeAll`), сравнивает по 5 категориям расхождений
+и формирует HTML-отчёт с отправкой по email через SMTP с retry. Если
+найдены расхождения — дополнительно создаёт задачу в Jira со связью
+к родительской квартальной задаче.
 
 **Jira-логика:** ищется родительская квартальная задача по JQL, создаётся
 новый тикет с детальным отчётом в Wiki Markup, связывается через `Связано

@@ -28,8 +28,8 @@ HTML-отчёт по email.
 ```mermaid
 flowchart LR
     subgraph IN["Inputs"]
-        EX["Excel<br/>HR registry"]
-        AD["Active Directory<br/>(pyad)"]
+        EX["Excel<br/>HR registry<br/>(privileged users)"]
+        AD["Active Directory<br/>employeeType=ExcludeAll"]
         KR["keyring<br/>(Jira API token)"]
     end
 
@@ -61,11 +61,11 @@ flowchart LR
     class EMAIL,ISSUE out
 ```
 
-Скрипт читает Excel-реестр и Active Directory (через `pyad` с фильтром
-`employeeType=ExcludeAll`), сравнивает по 5 категориям расхождений
-и формирует HTML-отчёт с отправкой по email через SMTP с retry. Если
-найдены расхождения — дополнительно создаёт задачу в Jira со связью
-к родительской квартальной задаче.
+Скрипт читает Excel-реестр привилегированных учёток и Active Directory
+(только пользователи с атрибутом `employeeType=ExcludeAll`), сравнивает
+по 5 категориям расхождений и формирует HTML-отчёт с отправкой по email
+через SMTP с retry. Если найдены расхождения — дополнительно создаёт
+задачу в Jira со связью к родительской квартальной задаче.
 
 **Jira-логика:** ищется родительская квартальная задача по JQL, создаётся
 новый тикет с детальным отчётом в Wiki Markup, связывается через `Связано
